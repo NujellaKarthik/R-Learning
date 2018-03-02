@@ -1,0 +1,72 @@
+---
+output: html_notebook
+---
+```{r}
+getwd()
+
+```
+
+```{r}
+Climate_Change=read.csv("climate_change.csv")
+Climate_Change
+```
+
+```{r}
+summary(Climate_Change)
+```
+
+```{r}
+TrainSet= subset(Climate_Change, Year <= 2006)
+TrainSet
+summary(TrainSet)
+
+```
+
+```{r}
+TestSet= subset(Climate_Change, Year > 2006)
+TestSet
+summary(TestSet)
+```
+
+```{r}
+LinearReg_Train = lm(Temp ~ MEI + CO2 + CH4 + N2O + CFC.11 + CFC.12 + TSI + Aerosols, data=TrainSet)
+
+```
+
+```{r}
+summary(LinearReg_Train)
+```
+
+```{r}
+cor(Climate_Change$CO2,Climate_Change$N2O)
+```
+
+```{r}
+cor(Climate_Change$N2O,Climate_Change$CFC.11)
+```
+```{r}
+cor(Climate_Change)
+```
+```{r}
+LinearReg_Train_N2o = lm(Temp ~ MEI + N2O + TSI + Aerosols, data=TrainSet)
+summary(LinearReg_Train_N2o)
+```
+```{r}
+Step_LinReg_Train = step(LinearReg_Train)
+```
+
+```{r}
+summary(Step_LinReg_Train)
+```
+```{r}
+Temp_Prediction = predict(Step_LinReg_Train, newdata = TestSet)
+summary(Temp_Prediction)
+```
+
+```{r}
+SSE = sum((Temp_Prediction - TestSet$Temp)^2)
+SST = sum((mean(TrainSet$Temp) - TestSet$Temp)^2)
+R2 = 1- (SSE/SST)
+R2
+```
+
